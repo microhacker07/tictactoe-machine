@@ -1,7 +1,5 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
-#include <vector>
-#include <string>
 #include "Machine.h"
 
 // Whole mess of messy global variables
@@ -17,6 +15,10 @@ int playingGame = -1;
 int humanPlayer;
 std::string prevMachine1;
 std::string prevMachine2;
+unsigned int numberOfComputerGames = 0;
+unsigned int ComputerVComputerWins[2] = {0, 0};
+unsigned int numberOfHumanGames = 0;
+unsigned int HumanVComputerWins[2] = {0, 0};
 
 Machine first(0, 3, 1, -1);
 Machine second(1, 3, 1, -1);
@@ -48,6 +50,15 @@ void clear() {
   prevMachine2 = "";
 }
 
+void clearScore() {
+  numberOfComputerGames = 0;
+  ComputerVComputerWins[0] = 0;
+  ComputerVComputerWins[1] = 0;
+  numberOfHumanGames = 0;
+  HumanVComputerWins[0] = 0;
+  HumanVComputerWins[1] = 0;
+}
+
 // This function take in a SFML keycode input and handles it
 
 void input(sf::RenderWindow* window, int keycode) {
@@ -67,6 +78,11 @@ void input(sf::RenderWindow* window, int keycode) {
     } else {
       humanPlayer = 0;
     }
+    clear();
+    break;
+
+    case sf::Keyboard::C:
+    clearScore();
     clear();
     break;
 
@@ -147,6 +163,12 @@ void endgame(int b) {
   }
   if (humanPlayer != 0) {
     humanPlayer = humanPlayer%2+1;
+    if (gameResults[humanPlayer-1] == 0) {
+      HumanVComputerWins[0]++;
+    } else if (gameResults[humanPlayer-1] == 2){
+      HumanVComputerWins[1]++;
+    }
+    numberOfHumanGames++;
   }
   playingGame = -1;
 }
@@ -337,7 +359,6 @@ void draw(sf::RenderWindow* window) {
       }
       window->draw(basicText(percentStr, .9f, 25.75f+x, 14.f+y));
     }
-    printf("\n");
   }
 
   if (prevMachine2 != "") {
@@ -368,10 +389,18 @@ void draw(sf::RenderWindow* window) {
     player2Str = "Computer";
   }
 
-  window->draw(basicText("Com Player 1", 1.f, 28.f, 12.25f));
-  window->draw(basicText("Com Player 2", 1.f, 40.5f, 12.25f));
+  window->draw(basicText("Cpu Player 1", 1.f, 28.f, 12.25f));
+  window->draw(basicText("Cpu Player 2", 1.f, 40.5f, 12.25f));
   window->draw(basicText(player1Str, 1.5f, 29.5f, 1.5f));
   window->draw(basicText(player2Str, 1.5f, 41.5f, 1.5f));
+
+  window->draw(basicText("Human Wins: " + std::to_string(HumanVComputerWins[0]), 1.f, 25.f, 5.f));
+  window->draw(basicText("Cpu Wins: " + std::to_string(HumanVComputerWins[1]), 1.f, 25.f, 6.f));
+  window->draw(basicText("HvC Draws: " + std::to_string(numberOfHumanGames-(HumanVComputerWins[0]+HumanVComputerWins[1])), 1.f, 25.f, 7.f));
+
+  window->draw(basicText("Cpu 1 Wins: " + std::to_string(ComputerVComputerWins[0]), 1.f, 25.f, 8.5f));
+  window->draw(basicText("Cpu 2 Wins: " + std::to_string(ComputerVComputerWins[1]), 1.f, 25.f, 9.5f));
+  window->draw(basicText("CvC Draws: " + std::to_string(numberOfComputerGames-(ComputerVComputerWins[0]+ComputerVComputerWins[1])), 1.f, 25.f, 10.5f));
 
   window->draw(drawCross (25.f, 0.f, .5f));
   window->draw(drawCircle(37.5f, 0.f, .5f));
@@ -412,8 +441,6 @@ int main(int argc, char const *argv[]) {
   int wait = 0;
   int draws;
   bool afterGame = 0;
-  unsigned int numberOfGames = 0;
-  unsigned int wins[2] = {0, 0};
 
   while(window.isOpen()) {
 
@@ -450,18 +477,20 @@ int main(int argc, char const *argv[]) {
     if (humanPlayer != 0||wait==1) draw(&window);
     if (playingGame == -1) wait++;
     if (wait > 30 || (humanPlayer==0&&wait>2)) {
-      if (gameResults[0]==2) wins[0]++;
-      if (gameResults[1]==2) wins[1]++;
+      if (humanPlayer == 0) {
+        if (gameResults[0]==2) ComputerVComputerWins[0]++;
+        if (gameResults[1]==2) ComputerVComputerWins[1]++;
+      }
       clear();
       afterGame = false;
       wait = 0;
-      numberOfGames++;
-      draws = numberOfGames - (wins[0] + wins[1]);
+      numberOfComputerGames++;
+      draws = numberOfComputerGames - (ComputerVComputerWins[0] + ComputerVComputerWins[1]);
       printf("Number of Games: %i, Player 1: %i - %f%%, Player 2: %i - %f%%, Draw: %i - %f%%\r",
-              numberOfGames,
-              wins[0], 100*((float)wins[0]/numberOfGames),
-              wins[1], 100*((float)wins[1]/numberOfGames),
-              draws, 100*((float)draws/numberOfGames)
+              numberOfComputerGames,
+              ComputerVComputerWins[0], 100*((float)ComputerVComputerWins[0]/numberOfComputerGames),
+              ComputerVComputerWins[1], 100*((float)ComputerVComputerWins[1]/numberOfComputerGames),
+              draws, 100*((float)draws/numberOfComputerGames)
              );
     }
 

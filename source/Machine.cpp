@@ -1,7 +1,6 @@
 #include "Machine.h"
 
 #include <fstream>
-#include <stdio.h>
 #include <string>
 
 Machine::Machine(int playerType, int winGrowth, int tieGrowth, int loseGrowth) {
@@ -33,7 +32,7 @@ int Machine::tile(bool currentPlayer, std::string gameState) {
     int point = -1;
     bool created = false;
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
       gameState = stringRotation(gameState);
       rot = i+1;
       for (unsigned int i = 0; i < data.size(); i++) {
@@ -53,13 +52,11 @@ int Machine::tile(bool currentPlayer, std::string gameState) {
     selectedTile = data[point].chooseTile();
     if (selectedTile == -343) {
       data[point].reset();
-      //return selectedTile;
       selectedTile = data[point].chooseTile();
     }
     listOfMoves.push_back(point);
     listOfMovePositions.push_back(selectedTile);
     for (int i = 0; i < rot; i++) if (!created) selectedTile = intRotation(selectedTile);
-    //printf("Datasize of player %i: %i | ", player+1, (int)data.size());
     return selectedTile;
   }
   return -1;
@@ -67,7 +64,7 @@ int Machine::tile(bool currentPlayer, std::string gameState) {
 
 float Machine::getWeightPercentages(std::string gameState, int weight) {
   int index = -1;
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < 5; i++) {
     gameState = stringRotation(gameState);
     for (unsigned int i = 0; i < data.size(); i++) {
       if (data[i].getTStr() == gameState) {
@@ -91,13 +88,9 @@ void Machine::learn(int result) {
     growth = lose;
   }
 
-  //printf("-- Teaching ML Player %i with %i --\n", player+1, growth);
-
   for (unsigned int i = 0; i < listOfMoves.size(); i++) {
     data[listOfMoves[i]].changeWeight(growth, listOfMovePositions[i]);
   }
-
-  //printf("-- End Reinforcement --\n");
 
   listOfMoves.clear();
   listOfMovePositions.clear();
