@@ -12,10 +12,12 @@ public:
   std::string stringRotation(std::string input);
   int intRotation(int input);
   int tile(bool currentPlayer, std::string gameState);
+  float getWeightPercentages(std::string gameState, int weight);
   void learn(int result);
   void save();
   void load();
   void forget();
+  void clearMoves();
 
 private:
   bool player;
