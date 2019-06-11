@@ -397,10 +397,12 @@ void draw(sf::RenderWindow* window) {
   window->draw(basicText("Human Wins: " + std::to_string(HumanVComputerWins[0]), 1.f, 25.f, 5.f));
   window->draw(basicText("Cpu Wins: " + std::to_string(HumanVComputerWins[1]), 1.f, 25.f, 6.f));
   window->draw(basicText("HvC Draws: " + std::to_string(numberOfHumanGames-(HumanVComputerWins[0]+HumanVComputerWins[1])), 1.f, 25.f, 7.f));
+  window->draw(basicText("# of Games: " + std::to_string(numberOfHumanGames), 1.2f, 36.5f, 5.5f));
 
   window->draw(basicText("Cpu 1 Wins: " + std::to_string(ComputerVComputerWins[0]), 1.f, 25.f, 8.5f));
   window->draw(basicText("Cpu 2 Wins: " + std::to_string(ComputerVComputerWins[1]), 1.f, 25.f, 9.5f));
   window->draw(basicText("CvC Draws: " + std::to_string(numberOfComputerGames-(ComputerVComputerWins[0]+ComputerVComputerWins[1])), 1.f, 25.f, 10.5f));
+  window->draw(basicText("# of Games: " + std::to_string(numberOfComputerGames), 1.2f, 36.5f, 9.f));
 
   window->draw(drawCross (25.f, 0.f, .5f));
   window->draw(drawCircle(37.5f, 0.f, .5f));
