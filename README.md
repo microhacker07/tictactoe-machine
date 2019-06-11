@@ -1,7 +1,7 @@
 # tictactoe-machine
 An attempt to make a tic-tac-toe machine learning player with using SFML for graphics. This project is written in C++.
 
-Keybinding:
+### Keybinding:
 
 t   => toggle computer vs computer mode for training
 
@@ -17,6 +17,6 @@ F3  => makes both machine learning players 'forget' everything they know
 
 esc => closes the program
 
-Requirements to compile:
+### Prerequisites
 
--SFML 2.5
+* SFML 2.5
