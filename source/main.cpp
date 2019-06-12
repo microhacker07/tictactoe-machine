@@ -418,13 +418,8 @@ void draw(sf::RenderWindow* window) {
   for (int i = 0; i < 9; i++) {
     x = (i%3)*8.33333;
     y = (i/3)*8.33333;
-    if (humanPlayer == 0) {
-      if (grid[i] == 1) window->draw(drawCross (x, y, 1.f));
-      if (grid[i] == 2) window->draw(drawCircle(x, y, 1.f));
-    } else {
-      if (grid[i] == humanPlayer%2+1) window->draw(drawCross (x, y, 1.f));
-      if (grid[i] == humanPlayer) window->draw(drawCircle(x, y, 1.f));
-    }
+    if (grid[i] == 1) window->draw(drawCross (x, y, 1.f));
+    if (grid[i] == 2) window->draw(drawCircle(x, y, 1.f));
   }
 
   if (line!=-1) window->draw(drawWinLine());
