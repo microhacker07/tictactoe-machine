@@ -162,13 +162,14 @@ void endgame(int b) {
     gameResults[1] = 1;
   }
   if (humanPlayer != 0) {
-    humanPlayer = humanPlayer%2+1;
-    if (gameResults[humanPlayer-1] == 0) {
+    if (gameResults[humanPlayer%2] == 0) {
       HumanVComputerWins[0]++;
-    } else if (gameResults[humanPlayer-1] == 2){
+    } else if (gameResults[humanPlayer%2] == 2){
       HumanVComputerWins[1]++;
     }
     numberOfHumanGames++;
+  } else {
+    numberOfComputerGames++;
   }
   playingGame = -1;
 }
@@ -389,6 +390,13 @@ void draw(sf::RenderWindow* window) {
     player2Str = "Computer";
   }
 
+  sf::RectangleShape rect(sf::Vector2f(12.5f*SCALEY, .5f*SCALEY));
+  rect.setFillColor(sf::Color::Green);
+  sf::Vector2f coord(25.f, 4.f);
+  if (currentPlayer == 1) coord.x += 12.5f;
+  rect.setPosition(coord.x*SCALEY, coord.y*SCALEY);
+  window -> draw(rect);
+
   window->draw(basicText("Cpu Player 1", 1.f, 28.f, 12.25f));
   window->draw(basicText("Cpu Player 2", 1.f, 40.5f, 12.25f));
   window->draw(basicText(player1Str, 1.5f, 29.5f, 1.5f));
@@ -410,8 +418,13 @@ void draw(sf::RenderWindow* window) {
   for (int i = 0; i < 9; i++) {
     x = (i%3)*8.33333;
     y = (i/3)*8.33333;
-    if (grid[i] == 1) window->draw(drawCross (x, y, 1.f));
-    if (grid[i] == 2) window->draw(drawCircle(x, y, 1.f));
+    if (humanPlayer == 0) {
+      if (grid[i] == 1) window->draw(drawCross (x, y, 1.f));
+      if (grid[i] == 2) window->draw(drawCircle(x, y, 1.f));
+    } else {
+      if (grid[i] == humanPlayer%2+1) window->draw(drawCross (x, y, 1.f));
+      if (grid[i] == humanPlayer) window->draw(drawCircle(x, y, 1.f));
+    }
   }
 
   if (line!=-1) window->draw(drawWinLine());
@@ -482,11 +495,12 @@ int main(int argc, char const *argv[]) {
       if (humanPlayer == 0) {
         if (gameResults[0]==2) ComputerVComputerWins[0]++;
         if (gameResults[1]==2) ComputerVComputerWins[1]++;
+      } else {
+        humanPlayer = humanPlayer%2+1;
       }
       clear();
       afterGame = false;
       wait = 0;
-      numberOfComputerGames++;
       draws = numberOfComputerGames - (ComputerVComputerWins[0] + ComputerVComputerWins[1]);
       printf("Number of Games: %i, Player 1: %i - %f%%, Player 2: %i - %f%%, Draw: %i - %f%%\r",
               numberOfComputerGames,
