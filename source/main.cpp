@@ -9,6 +9,7 @@ sf::Font font;
 int selectedTile = -1;
 bool currentPlayer = 0;
 bool sleep = false;
+bool slowmo = false;
 int line = -1;
 int gameResults[2];
 int playingGame = -1;
@@ -70,6 +71,10 @@ void input(sf::RenderWindow* window, int keycode) {
 
     case sf::Keyboard::R:
     clear();
+    break;
+
+    case sf::Keyboard::S:
+    slowmo = !slowmo;
     break;
 
     case sf::Keyboard::T:
@@ -466,6 +471,11 @@ int main(int argc, char const *argv[]) {
     }
     // End of First Learner
 
+    if (slowmo == true && humanPlayer == 0) {
+      draw(&window);
+      sf::sleep(sf::milliseconds(200));
+    }
+
     // Start of Second Learner
     if (playingGame == 1 && humanPlayer != 2) {
       for (int i = 0; i < 9; i++) currentGameState[i] = grid[i]+48;
@@ -484,7 +494,10 @@ int main(int argc, char const *argv[]) {
       afterGame = true;
     }
 
-    if (humanPlayer != 0||wait==1) draw(&window);
+    if ((humanPlayer != 0 || slowmo == true) || wait == 1) draw(&window);
+    if (slowmo == true && humanPlayer == 0) {
+      sf::sleep(sf::milliseconds(200));
+    }
     if (playingGame == -1) wait++;
     if (wait > 30 || (humanPlayer==0&&wait>2)) {
       if (humanPlayer == 0) {
