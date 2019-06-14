@@ -62,10 +62,6 @@ int Tdata::chooseTile() {
 }
 
 void Tdata::changeWeight(int result, int tile) {
-  int prevWeight[9];
-  for (int i = 0; i < 9; i++) {
-    prevWeight[i] = weight[i];
-  }
   if (-1 < weight[tile] + result && weight[tile] + result < MAXWEIGHT) weight[tile] += result;
   newTiles[tile] = false;
 }

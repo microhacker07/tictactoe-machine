@@ -443,7 +443,7 @@ int main(int argc, char const *argv[]) {
   window.setPosition(sf::Vector2i(sf::VideoMode::getDesktopMode().width/2-WIDTH/2, sf::VideoMode::getDesktopMode().height/2-HEIGHT/2));
   window.setVerticalSyncEnabled(true);
 
-  if (!font.loadFromFile("assets/arial.ttf"))
+  if (!font.loadFromFile("assets/Arial.ttf"))
   {
     printf("Failed to load fonts\n");
   }
