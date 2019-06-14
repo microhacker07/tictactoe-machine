@@ -5,7 +5,7 @@ This project is written in C++ and uses the SFML library for displaying and draw
 This machine learning project works with having "weights" on each open space. 
 The machine then picks a random space, with spaces that have more "weight" to them having a higher chance of being picked. 
 It learns by reinforcement with by recording all the moves it makes throughout one game. 
-Then based on the outcome of the game (whether it wons, loses, or ties), it will remove or add weights on each move that led to that outcome. 
+Then based on the outcome of the game (whether it wins, loses, or ties), it will remove or add weights on each move that led to that outcome. 
 So if it loses a match, it is less likely to make the same moves as before. 
 In this program, I have it so it will add 3 weights for a win, 1 weight of it ties, and it will remove 1 weight of it loses. 
 This setup favors winning and still makes getting a tie beneficial, so you might see sometimes that the computer picked a move that led to a tie, even though it could of won. 
