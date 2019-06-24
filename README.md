@@ -1,5 +1,5 @@
 # tictactoe-machine
-An attempt to make a tic-tac-toe machine learning player. 
+A tic-tac-toe machine learning game. (Thermonuclear war is depreciated!)
 This project is written in C++ and uses the SFML library for displaying and drawing to a window. 
 
 This machine learning project works with having "weights" on each open space. 
