@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
+#include <cmath>
 #include "Machine.h"
 
 // Whole mess of messy global variables
@@ -26,8 +27,9 @@ Machine second(1, 3, 1, -1);
 
 int grid[9];
 
-const int HEIGHT = 25*16;
-const int WIDTH  = 25*32;
+const int size = 48;
+const int HEIGHT = 25*size;
+const int WIDTH  = 55*size;
 
 const float SCALEX = WIDTH/25;
 const float SCALEY = HEIGHT/25;
@@ -55,6 +57,9 @@ void clearScore() {
   numberOfComputerGames = 0;
   ComputerVComputerWins[0] = 0;
   ComputerVComputerWins[1] = 0;
+}
+
+void clearHumanScore() {
   numberOfHumanGames = 0;
   HumanVComputerWins[0] = 0;
   HumanVComputerWins[1] = 0;
@@ -70,24 +75,35 @@ void input(sf::RenderWindow* window, int keycode) {
     break;
 
     case sf::Keyboard::R:
+		printf("\nErasing the chalkboard.\n");
     clear();
     break;
 
     case sf::Keyboard::S:
-    slowmo = !slowmo;
+		printf("\nToggling Slowmo.\n");
+		slowmo = !slowmo;
     break;
 
     case sf::Keyboard::T:
     if (humanPlayer == 0) {
       humanPlayer = 2;
+			printf("\nReady to play!!\n");
     } else {
       humanPlayer = 0;
+			printf("\nPlaying against myself again. Bored.\n");
     }
     clear();
     break;
 
     case sf::Keyboard::C:
+		printf("\nClearing the scores.\n");
     clearScore();
+    clear();
+    break;
+
+		case sf::Keyboard::H:
+		printf("\nClearing the human scores.\n");
+    clearHumanScore();
     clear();
     break;
 
@@ -332,12 +348,20 @@ sf::VertexArray drawBoard(float x1, float y1, float x2, float y2, float thicknes
 sf::Text basicText(std::string str, float size, float x, float y) {
   sf::Text text(str, font);
   text.setCharacterSize(size*SCALEY);
-  text.setColor(sf::Color::White);
+  text.setFillColor(sf::Color::White);
   text.setPosition(x*SCALEY, y*SCALEY);
 
   return text;
 }
 
+double percentage(int part, int whole, int rounding) {
+	if (whole == 0) {
+		return 0;
+	} else {
+		double percent = round((double)part/(double)whole * pow(10, 2 + rounding) ) / pow(10, rounding);
+		return percent;
+	}
+}
 // This does the rendering to the screen
 
 void draw(sf::RenderWindow* window) {
@@ -410,12 +434,22 @@ void draw(sf::RenderWindow* window) {
   window->draw(basicText("Human Wins: " + std::to_string(HumanVComputerWins[0]), 1.f, 25.f, 5.f));
   window->draw(basicText("Cpu Wins: " + std::to_string(HumanVComputerWins[1]), 1.f, 25.f, 6.f));
   window->draw(basicText("HvC Draws: " + std::to_string(numberOfHumanGames-(HumanVComputerWins[0]+HumanVComputerWins[1])), 1.f, 25.f, 7.f));
-  window->draw(basicText("# of Games: " + std::to_string(numberOfHumanGames), 1.2f, 36.5f, 5.5f));
+  window->draw(basicText("# of Games: " + std::to_string(numberOfHumanGames), 1.2f, 39.0f, 5.5f));
 
-  window->draw(basicText("Cpu 1 Wins: " + std::to_string(ComputerVComputerWins[0]), 1.f, 25.f, 8.5f));
-  window->draw(basicText("Cpu 2 Wins: " + std::to_string(ComputerVComputerWins[1]), 1.f, 25.f, 9.5f));
-  window->draw(basicText("CvC Draws: " + std::to_string(numberOfComputerGames-(ComputerVComputerWins[0]+ComputerVComputerWins[1])), 1.f, 25.f, 10.5f));
-  window->draw(basicText("# of Games: " + std::to_string(numberOfComputerGames), 1.2f, 36.5f, 9.f));
+	percentStr = std::to_string( percentage(ComputerVComputerWins[0], numberOfComputerGames, 2));
+	percentStr = percentStr.substr(0,4) + '%';
+  window->draw(basicText("Cpu 1 Wins: " + std::to_string(ComputerVComputerWins[0]) + "  " + percentStr, 1.f, 25.f, 8.5f));
+
+	percentStr = std::to_string( percentage(ComputerVComputerWins[1], numberOfComputerGames, 2));
+	percentStr = percentStr.substr(0,4) + '%';
+
+  window->draw(basicText("Cpu 2 Wins: " + std::to_string(ComputerVComputerWins[1]) + "  " + percentStr, 1.f, 25.f, 9.5f));
+
+	percentStr = std::to_string( percentage(numberOfComputerGames-(ComputerVComputerWins[0]+ComputerVComputerWins[1]), numberOfComputerGames, 2));
+	percentStr = percentStr.substr(0,4) + '%';
+
+  window->draw(basicText("CvC Draws: " + std::to_string(numberOfComputerGames-(ComputerVComputerWins[0]+ComputerVComputerWins[1])) + "  " + percentStr, 1.f, 25.f, 10.5f));
+  window->draw(basicText("# of Games: " + std::to_string(numberOfComputerGames), 1.2f, 39.0f, 9.f));
 
   window->draw(drawCross (25.f, 0.f, .5f));
   window->draw(drawCircle(37.5f, 0.f, .5f));
@@ -454,8 +488,9 @@ int main(int argc, char const *argv[]) {
   std::string currentGameState = "000000000";
 
   int wait = 0;
-  int draws;
+  int gamesToDisplay = 0;
   bool afterGame = 0;
+	bool afterGame1 = 0;
 
   while(window.isOpen()) {
 
@@ -473,7 +508,7 @@ int main(int argc, char const *argv[]) {
 
     if (slowmo == true && humanPlayer == 0) {
       draw(&window);
-      sf::sleep(sf::milliseconds(200));
+      sf::sleep(sf::milliseconds(500));
     }
 
     // Start of Second Learner
@@ -487,19 +522,34 @@ int main(int argc, char const *argv[]) {
 
     if (playingGame == -1 && !afterGame) {
       first.learn(gameResults[0]);
+			afterGame = true;
     }
 
-    if (playingGame == -1 && !afterGame) {
+    if (playingGame == -1 && !afterGame1) {
       second.learn(gameResults[1]);
-      afterGame = true;
+      afterGame1 = true;
     }
 
-    if ((humanPlayer != 0 || slowmo == true) || wait == 1) draw(&window);
-    if (slowmo == true && humanPlayer == 0) {
-      sf::sleep(sf::milliseconds(200));
+    if ((humanPlayer != 0 || slowmo == true) || (wait == 1 || (gamesToDisplay == 300 && playingGame == -1)))
+    {
+      draw(&window);
+      gamesToDisplay = 0;
     }
-    if (playingGame == -1) wait++;
-    if (wait > 30 || (humanPlayer==0&&wait>2)) {
+
+    if (slowmo == true && humanPlayer == 0)
+    {
+      sf::sleep(sf::milliseconds(500));
+    }
+
+    if (playingGame == -1 && humanPlayer != 0)
+    {
+      wait++;
+    } else if (playingGame == -1 && humanPlayer == 0)
+    {
+      gamesToDisplay++;
+    }
+
+    if (wait > 30 || (humanPlayer==0&&playingGame == -1)) {
       if (humanPlayer == 0) {
         if (gameResults[0]==2) ComputerVComputerWins[0]++;
         if (gameResults[1]==2) ComputerVComputerWins[1]++;
@@ -508,14 +558,8 @@ int main(int argc, char const *argv[]) {
       }
       clear();
       afterGame = false;
+			afterGame1 = false;
       wait = 0;
-      draws = numberOfComputerGames - (ComputerVComputerWins[0] + ComputerVComputerWins[1]);
-      printf("Number of Games: %i, Player 1: %i - %f%%, Player 2: %i - %f%%, Draw: %i - %f%%\r",
-              numberOfComputerGames,
-              ComputerVComputerWins[0], 100*((float)ComputerVComputerWins[0]/numberOfComputerGames),
-              ComputerVComputerWins[1], 100*((float)ComputerVComputerWins[1]/numberOfComputerGames),
-              draws, 100*((float)draws/numberOfComputerGames)
-             );
     }
 
   }

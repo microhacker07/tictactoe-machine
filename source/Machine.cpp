@@ -12,17 +12,17 @@ Machine::Machine(int playerType, int winGrowth, int tieGrowth, int loseGrowth) {
 
 Machine::~Machine() {}
 
-std::string Machine::stringRotation(std::string gameState) {
-  std::string temp = "000000000";
-  for (int i = 0; i < 9; i++) {
-    temp[i] = gameState[6 - ((i%3) *3) + (i/3)];
-  }
-  return temp;
-}
-
 int Machine::intRotation(int input) {
   input = 6 - ((input%3) *3) + (input/3);
   return input;
+}
+
+std::string Machine::stringRotation(std::string gameState) {
+  std::string temp = "000000000";
+  for (int i = 0; i < 9; i++) {
+    temp[i] = gameState[intRotation(i)];
+  }
+  return temp;
 }
 
 int Machine::tile(bool currentPlayer, std::string gameState) {
@@ -66,6 +66,7 @@ float Machine::getWeightPercentages(std::string gameState, int weight) {
   int index = -1;
   for (int i = 0; i < 5; i++) {
     gameState = stringRotation(gameState);
+		weight = intRotation(weight);
     for (unsigned int i = 0; i < data.size(); i++) {
       if (data[i].getTStr() == gameState) {
         index = i;

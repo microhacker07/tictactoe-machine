@@ -21,7 +21,7 @@ private:
   std::string tStrData;
   int weight[9];
   bool newTiles[9];
-  int MAXWEIGHT = 500;
+  int MAXWEIGHT = 1000;
   int INITIAL = 3;
 };
 

@@ -9,8 +9,8 @@ class Machine
 public:
   Machine(int playerType, int winGrowth, int tieGrowth, int loseGrowth);
   ~Machine();
-  std::string stringRotation(std::string input);
   int intRotation(int input);
+  std::string stringRotation(std::string input);
   int tile(bool currentPlayer, std::string gameState);
   float getWeightPercentages(std::string gameState, int weight);
   void learn(int result);
